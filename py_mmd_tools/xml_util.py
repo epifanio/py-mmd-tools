@@ -93,3 +93,29 @@ def xml_translate(
         output.write(xml_as_string)
         result=True
     return result
+
+
+def filelist(directory):
+    print('os.walk("%s")' % directory)
+    xml_files = []
+    for subdir, dirs, files in os.walk(directory):
+        for file in files:
+            # print('File: %s' %file)
+            file_path = subdir + os.sep + file
+            if file_path.endswith(".xml"):
+                xml_files.append(file_path)
+    return xml_files
+
+
+def translate_and_write(xml_file, xslt, outdir="/tmp"):
+    pathlib.Path(outdir).mkdir(parents=True, exist_ok=True)
+    if not os.path.isfile(xslt):
+        raise Exception("XSLT file is missing: %s" % xslt)
+    outputfile = pathlib.PurePosixPath(outdir).joinpath(
+        pathlib.PurePosixPath(xml_file).name
+    )
+    xml_translate(
+        xml_file=xml_file,
+        outputfile=outputfile,
+        xslt=xslt,
+    )
